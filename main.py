@@ -1,6 +1,8 @@
 import uvicorn
 from fastapi import FastAPI, UploadFile, File, Form
 from fastapi.responses import StreamingResponse, JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
+
 from PyPDF2 import PdfReader, PdfWriter
 import fitz  # PyMuPDF
 from typing import List
@@ -11,6 +13,20 @@ from pdf2image import convert_from_bytes
 import traceback
 
 app = FastAPI()
+
+origins = [
+    "http://localhost:5173",  # Vite default
+    "http://localhost:3000",  # CRA/Next.js default
+]
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,  # or ["*"] for all origins
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # ---------------- PDF → JPG ----------------
 @app.post("/pdf-to-jpg")
